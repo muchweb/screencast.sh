@@ -1,6 +1,6 @@
 # screencast.sh
 
-Record part of your screen in WEBM`*` and (optionally) upload it.
+Record part of your screen in WEBM¹ and (optionally) upload it.
 
 ## Requirements
  - `ffmpeg` (video recording)
@@ -51,4 +51,4 @@ I find it handy just to bind it to a key.
 
 ---
 
-`*` is is being recorded in lossless `AVI` and then converted to `WEBM`
+¹: it is being recorded in lossless `AVI` and then converted to `WEBM`
