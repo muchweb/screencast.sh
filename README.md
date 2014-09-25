@@ -9,7 +9,38 @@ Record part of your screen in WEBM`*` and (optionally) upload it.
  
 ## Configuration
 
-Please change target file location
+Here are default values:
+
+- Target file location (by default all videos are saved in your `$HOME` directory)
+
+	```
+	targetbase=$HOME
+	```
+- Date format
+
+	```
+	now=$(date +"%Y_%m_%d_%H_%M_%S")
+	```
+- Upload server
+
+	```
+	uploadserver="host/sharing/"
+	```
+- Temporary AVI file location
+
+	```
+	f1="${targetbase}/screencast_temp.avi"
+	```
+- Final WEBM file location
+
+	```
+	f2="${targetbase}/screencast_${now}.webm"
+	```
+- Temporary PID file location
+
+	```
+	screencast_pid="${targetbase}/screencast.pid"
+	```
 
 ## Usage
 
