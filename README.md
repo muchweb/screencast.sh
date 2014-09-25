@@ -3,9 +3,11 @@
 Record part of your screen in WEBM¹ and (optionally) upload it.
 
 ## Requirements
- - `ffmpeg` (video recording)
- - `key-mon` (for keyboard demonstration)
- - `zenity` (*optional*, upload prompts)
+ - ffmpeg (video recording)
+ - key-mon (*optional*, for keyboard demonstration)
+ - zenity (*optional*, prompts)
+ - notify-send (*optional*, for friendly prompts)
+ - curl (*optional*, used for file upload)
  
 ## Configuration
 
