@@ -27,17 +27,17 @@
 
 # ================ Configuration ================
 # Target file location
-targetbase=$HOME
+screencast_base=$HOME
 # Date format
-now=$(date +"%Y_%m_%d_%H_%M_%S")
+screencast_date=$(date +"%Y_%m_%d_%H_%M_%S")
 # Upload server
-uploadserver="host/sharing/"
+screencast_uploadserver="host/sharing/"
 # Temporary AVI file location
-f1="${targetbase}/screencast_temp.avi"
+screencast_avi="${screencast_base}/screencast_temp.avi"
 # Final WEBM file location
-f2="${targetbase}/screencast_${now}.webm"
+screencast_webm="${screencast_base}/screencast_${screencast_date}.webm"
 # Temporary PID file location
-screencast_pid="${targetbase}/screencast.pid"
+screencast_pid="${screencast_base}/screencast.pid"
 
 # ================ Usage ================
 # Run to start recording (you will see an outline)
@@ -54,11 +54,12 @@ function screencast-start {
     screencast-notify "Recording now"
 
 	if command -v key-mon >/dev/null 2>&1; then
-		nohup key-mon --scale=0.7 --theme=oblivion &
+		# nohup key-mon --scale=0.7 --theme=oblivion &
+		nohup key-mon --scale=1 --theme=oblivion &
 	fi
 
-	nohup ffmpeg -f x11grab -show_region 1 -r 25 -s 1024x768 -i :0.0+0,16 -vcodec huffyuv $f1 &
-	# nohup ffmpeg -f x11grab -follow_mouse 150 -show_region 1 -r 25 -s 800x600 -i :0.0+0,16 -vcodec huffyuv $f1 &
+	nohup ffmpeg -f x11grab -follow_mouse 150 -show_region 1 -r 25 -s 1024x768 -i :0.0+0,16 -vcodec huffyuv $screencast_avi &
+	# nohup ffmpeg -f x11grab -show_region 1 -r 25 -s 1024x768 -i :0.0+0,16 -vcodec huffyuv $screencast_avi &
 	ffmpeg_pid=$!
 	touch "${screencast_pid}"
 	echo "${ffmpeg_pid}" > "${screencast_pid}"
@@ -79,13 +80,13 @@ function screencast-stop {
 
 	# Converting AVI to WEBM
 	if command -v zenity >/dev/null 2>&1; then
-		ffmpeg -threads 4 -i $f1 -c:v libvpx -crf 5 -b:v 2M -c:a libvorbis -q:a 10 $f2 | zenity --progress --auto-close --pulsate
+		ffmpeg -threads 4 -i $screencast_avi -c:v libvpx -crf 5 -b:v 2M -c:a libvorbis -q:a 10 $screencast_webm | zenity --progress --auto-close --pulsate
 	else
 		screencast-notify "Converting AVI to WEBM"
-		ffmpeg -threads 4 -i $f1 -c:v libvpx -crf 5 -b:v 2M -c:a libvorbis -q:a 10 $f2
+		ffmpeg -threads 4 -i $screencast_avi -c:v libvpx -crf 5 -b:v 2M -c:a libvorbis -q:a 10 $screencast_webm
 		screencast-notify "Conversion complete"
 	fi
-	rm $f1
+	rm $screencast_avi
 
 	command -v zenity >/dev/null 2>&1 || { echo >&2 "For file uploading confirmation please install 'zenity'. Aborting."; exit 1; }
 	screencast-rename
@@ -94,23 +95,25 @@ function screencast-stop {
 
 function screencast-rename {
     # Rename prompt
-    if zenity --entry --text="Rename/Move video?" --entry-text=$f2 then
-    	f2_old=$f2
-    	f2=$?
-		mv $f2_old $f2
-		screencast-notify "Video was renamed to ${f2}"
-  	fi
+	ENTRY=$(zenity --entry --text="Rename/Move video?" --entry-text=$screencast_webm)
+	if [ $? == 0 ]
+	then
+		screencast_webm_old=$screencast_webm
+    	screencast_webm=$ENTRY
+		mv $screencast_webm_old $screencast_webm
+		screencast-notify "Video was renamed to ${screencast_webm}"
+	fi
 }
 
 function screencast-upload {
     # Upload prompt
-	if zenity --question --text="Upload this screencast to ${uploadserver}?"; then
+	if zenity --question --text="Upload this screencast to ${screencast_uploadserver}?"; then
 		screencast-notify "Uploading now..."
-		response=$(curl -F "file=@${f2}" $uploadserver)
+		response=$(curl -F "file=@${screencast_webm}" $screencast_uploadserver)
 		echo $response | xclip -sel clip
 		screencast-notify "Upload complete. URL is: ${response} (copied to clipboard)"
-		if zenity --question --text="Remove file?"; then
-			rm "${f2}"
+		if zenity --question --text="Remove file (${screencast_webm})?"; then
+			rm $screencast_webm
 			screencast-notify "File has been deleted."
 		fi
 	fi
