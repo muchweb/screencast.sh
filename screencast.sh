@@ -31,7 +31,7 @@ screencast_base=$HOME
 # Date format
 screencast_date=$(date +"%Y_%m_%d_%H_%M_%S")
 # Upload server
-screencast_uploadserver="host/sharing/"
+screencast_uploadserver="http://strace.club/"
 # Temporary AVI file location
 screencast_avi="${screencast_base}/screencast_temp.avi"
 # Final WEBM file location
@@ -47,7 +47,7 @@ function screencast-notify {
     echo "${1}"
 	if command -v notify-send >/dev/null 2>&1; then
 		notify-send "${1}"
-	fi 
+	fi
 }
 
 function screencast-start {
@@ -109,7 +109,7 @@ function screencast-upload {
     # Upload prompt
 	if zenity --question --text="Upload this screencast to ${screencast_uploadserver}?"; then
 		screencast-notify "Uploading now..."
-		response=$(curl -F "file=@${screencast_webm}" $screencast_uploadserver)
+		response=$(curl -F "file[]=@${screencast_webm}" $screencast_uploadserver)
 		echo $response | xclip -sel clip
 		screencast-notify "Upload complete. URL is: ${response} (copied to clipboard)"
 		if zenity --question --text="Remove file (${screencast_webm})?"; then
