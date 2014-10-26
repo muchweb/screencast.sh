@@ -61,7 +61,7 @@ globalkeys = awful.util.table.join(
        {},
        "Print",
        function()
-           awful.util.spawn("bash ~/scripts/screenshot.sh", false)
+           awful.util.spawn("bash ~/scripts/screencast.sh/screencast.sh", false)
        end
     )
 )
