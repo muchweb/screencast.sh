@@ -19,11 +19,12 @@
 
 # ================ Installation ================
 # Requirements:
-#  - ffmpeg (video recording)
+#  - FFmpeg (video recording)
 #  - key-mon (optional, for keyboard demonstration)
 #  - zenity (optional, prompts)
 #  - notify-send (optional, for friendly prompts)
-#  - curl (optional, used for file upload)
+#  - cURL (optional, used for file upload)
+#  - GNU Bash, GNU Date
 
 # ================ Configuration ================
 # Target file location
@@ -44,14 +45,14 @@ screencast_pid="${screencast_base}/screencast.pid"
 # Run to stop recording
 
 function screencast-notify {
-    echo "${1}"
+	echo "${1}"
 	if command -v notify-send >/dev/null 2>&1; then
 		notify-send "${1}"
 	fi
 }
 
 function screencast-start {
-    screencast-notify "Recording now"
+	screencast-notify "Recording now"
 
 	if command -v key-mon >/dev/null 2>&1; then
 		# nohup key-mon --scale=0.7 --theme=oblivion &
@@ -66,16 +67,16 @@ function screencast-start {
 }
 
 function screencast-stop {
-    pid=$(cat "${screencast_pid}")
+	pid=$(cat "${screencast_pid}")
 	screencast-notify "Stopped recording"
 	# Sending SIGTERM to ffmpeg PID
 	kill -15 $pid
-    rm "${screencast_pid}"
-    rm nohup.out
+	rm "${screencast_pid}"
+	rm nohup.out
 
-    # Stopping key-mon
+	# Stopping key-mon
 	if command -v key-mon >/dev/null 2>&1; then
-	    killall key-mon
+		killall key-mon
 	fi
 
 	# Converting AVI to WEBM
@@ -94,19 +95,19 @@ function screencast-stop {
 }
 
 function screencast-rename {
-    # Rename prompt
+	# Rename prompt
 	ENTRY=$(zenity --entry --text="Rename/Move video?" --entry-text=$screencast_webm)
 	if [ $? == 0 ]
 	then
 		screencast_webm_old=$screencast_webm
-    	screencast_webm=$ENTRY
+		screencast_webm=$ENTRY
 		mv $screencast_webm_old $screencast_webm
 		screencast-notify "Video was renamed to ${screencast_webm}"
 	fi
 }
 
 function screencast-upload {
-    # Upload prompt
+	# Upload prompt
 	if zenity --question --text="Upload this screencast to ${screencast_uploadserver}?"; then
 		screencast-notify "Uploading now..."
 		response=$(curl -F "file[]=@${screencast_webm}" $screencast_uploadserver)

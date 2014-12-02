@@ -3,11 +3,12 @@
 Record your screen in WEBM¹ and (optionally) upload it.
 
 ## Requirements
- - `ffmpeg` video recording
+ - FFmpeg — video recording
  - `key-mon` *optional*, for keyboard demonstration
  - `zenity` *optional*, friendly prompts
  - `notify-send` *optional*, status messages
- - `curl` *optional*, used for file upload
+ - cURL *optional*, used for file upload
+ - GNU Bash, GNU Date
 
 ## Configuration
 
