@@ -55,8 +55,9 @@ screencast_pid="${screencast_base}/screencast.pid"
 1. Run once to start recording
 2. Run again to stop
 
-I find it handy just to bind it to a key, for example, <kbd>PrintScr</kbd>:
-```
+I find it handy just to bind it to a key, for example, <kbd>PrintScr</kbd> (code for Awesome WM):
+
+```lua
 globalkeys = awful.util.table.join(
     awful.key(
        {},
